@@ -80,7 +80,7 @@ if [ "$#" -ge 3 ]; then
     DIRTMP=${BASH_REMATCH[3]}
   for i in `seq ${first} ${end}`; do
     j=$(( i % 2000 ))
-    DIR1=``$(printf "%02d" $(( DIRTMP + i / 2000 )))
+    DIR1=$(printf "%02d" $(( DIRTMP + i / 2000 )))
     wget -O "$i.ts" "${DIR}-${DIR1}/$j.ts"
     while [ ! -s "$i.ts" ]; do
       sleep 3
