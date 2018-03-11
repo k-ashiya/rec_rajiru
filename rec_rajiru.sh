@@ -75,31 +75,29 @@ if [ "$#" -ge 3 ]; then
   mkdir -p "${TMPDIR}"
   cd "${TMPDIR}"
   DIR=`dirname ${num}`
-  [[ ${DIR} =~ ^([-0-9Tfm]+)-([0-9]+)-([0-9]+) ]]
-    DIR=`dirname ${m3u8URL}`/${BASH_REMATCH[1]}-${BASH_REMATCH[2]}
-    DIRTMP=${BASH_REMATCH[3]}
+  [[ ${DIR} =~ ^([0-9]+)-(${ch,,})-([0-9T]+)-([0-9]+)-([0-9]+) ]]
+    DIR=`dirname ${m3u8URL}`/${BASH_REMATCH[1]}-${BASH_REMATCH[2]}-${BASH_REMATCH[3]}-${BASH_REMATCH[4]}
+    DIRTMP=${BASH_REMATCH[5]}
   for i in `seq ${first} ${end}`; do
     j=$(( i % 2000 ))
     DIR1=$(printf "%02d" $(( DIRTMP + i / 2000 )))
-    wget -O "$i.ts" "${DIR}-${DIR1}/$j.ts"
+    wget -T 1 -O "$i.ts" "${DIR}-${DIR1}/$j.ts"
     while [ ! -s "$i.ts" ]; do
       sleep 3
-      wget -O "$i.ts" "${DIR}-${DIR1}/$j.ts"
+      wget -T 1 -O "$i.ts" "${DIR}-${DIR1}/$j.ts"
     done
     echo "file '${i}.ts'" >> concat.txt;
     sleep 9
   done
   ffmpeg -f concat -safe 0 -i concat.txt -c copy "${file}"
-  if [ -f "${file}" ]; then
-    for i in `seq ${first} ${end}`; do
-      rm "$i".ts
-    done
-  else
-    exit 1
-  fi
-  mv "${file}" ../.
-  cd ../
-  rm -r "${TMPDIR}"
+#  if [ -f "${file}" ]; then
+#    for i in `seq ${first} ${end}`; do
+#      rm "$i".ts
+#    done
+#  fi
+#  mv "${file}" ../.
+#  cd ../
+#  rm -r "${TMPDIR}"
 else
   usage
 fi
